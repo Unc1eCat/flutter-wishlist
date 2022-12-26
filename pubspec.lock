@@ -277,6 +277,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "6.0.3"
+  scale_button:
+    dependency: "direct main"
+    description:
+      name: scale_button
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.1.2"
   shimmer:
     dependency: "direct main"
     description:

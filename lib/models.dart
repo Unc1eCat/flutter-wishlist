@@ -15,6 +15,11 @@ class TextCard extends Card {
     required int pk,
     required this.text,
   }) : super(pk: pk);
+
+  TextCard copyWith({String? text}) => TextCard(
+        pk: pk,
+        text: text ?? this.text,
+      );
 }
 
 enum CardRelativePosition { above, below }

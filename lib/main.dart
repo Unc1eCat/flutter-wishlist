@@ -34,7 +34,12 @@ class MyAppState extends State<MyApp> {
             Wish(pk: 0, title: 'Harry Styles Vinyls', cards: [
               TextCard(pk: 1, text: "I already have Fine Line and Harry Styles on black vinyl and Harry's House on mint vinyl, so buy any other color."),
               TextCard(pk: 2, text: "UwU."),
-              ImageCard(pk: 3, image: NetworkImage('https://cdn.shoplightspeed.com/shops/634895/files/45980186/1600x2048x2/harry-styles-harrys-house-exclusive-yellow-vinyl.jpg'), textPosition: CardRelativePosition.below, text: 'I would really like the one above'),
+              ImageCard(
+                  pk: 3,
+                  image: NetworkImage(
+                      'https://cdn.shoplightspeed.com/shops/634895/files/45980186/1600x2048x2/harry-styles-harrys-house-exclusive-yellow-vinyl.jpg'),
+                  textPosition: CardRelativePosition.below,
+                  text: 'I would really like the one above'),
               TextCard(pk: 4, text: "😪😝🥵😈👍👍👍🎸🎹💿💿💿"),
             ]),
             Wish(
@@ -67,8 +72,14 @@ class MyAppState extends State<MyApp> {
         child: MaterialApp(
           title: 'Flutter Demo',
           theme: ThemeData.dark().copyWith(
+            textSelectionTheme: TextSelectionThemeData(
+              cursorColor: Colors.amberAccent[100],
+              selectionHandleColor: Colors.amberAccent[100],
+              selectionColor: Colors.orange[300]?.withOpacity(0.4),
+            ),
+            primaryColor: Colors.pinkAccent,
             textTheme: ThemeData.dark().textTheme.copyWith(
-                  titleMedium: const TextStyle(fontSize: 18),
+                  titleMedium: const TextStyle(fontSize: 18, letterSpacing: 0.5),
                   bodyMedium: const TextStyle(fontSize: 16),
                 ),
           ),

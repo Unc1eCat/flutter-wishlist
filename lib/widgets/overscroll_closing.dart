@@ -30,7 +30,7 @@ class OverscrollClosing extends StatefulWidget {
     Key? key,
     required this.child,
     required this.onClosed,
-    this.armingOverscroll = 70,
+    this.armingOverscroll = 60,
     this.vibrate = true,
   }) : super(key: key);
 
@@ -97,16 +97,65 @@ class OverscrollClosingState extends State<OverscrollClosing> with _DisposeDesha
 }
 
 class ClosingIndicator extends StatefulWidget {
-  // TODO: Allow setting duration
-  final Widget child;
-
-  const ClosingIndicator({Key? key, required this.child}) : super(key: key);
+  const ClosingIndicator({Key? key}) : super(key: key);
 
   @override
   State<ClosingIndicator> createState() => _ClosingIndicatorState();
 }
 
-class _ClosingIndicatorState extends State<ClosingIndicator> with TickerProviderStateMixin {
+class _ClosingIndicatorState extends State<ClosingIndicator> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late OverscrollClosingState overscrollClosing;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 150));
+    _controller.addListener(() {
+      setState(() {});
+    });
+    overscrollClosing = context.findAncestorStateOfType<OverscrollClosingState>()!;
+    overscrollClosing.addListener(_handleOverscrollClosing);
+  }
+
+  void _handleOverscrollClosing() {
+    if (overscrollClosing.isArmed) {
+      _controller.forward();
+    } else {
+      _controller.reverse();
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
+    overscrollClosing.removeListener(_handleOverscrollClosing);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FractionalTranslation(
+      translation: Offset(0, 0.8 - 0.8 * _controller.value),
+      child: Opacity(
+        opacity: _controller.value,
+        child: Icon(FluttericonIcons.chevronDown),
+      ),
+    );
+  }
+}
+
+class SingleChildClosingIndicator extends StatefulWidget {
+  // TODO: Allow setting duration
+  final Widget child;
+
+  const SingleChildClosingIndicator({Key? key, required this.child}) : super(key: key);
+
+  @override
+  State<SingleChildClosingIndicator> createState() => _SingleChildClosingIndicatorState();
+}
+
+class _SingleChildClosingIndicatorState extends State<SingleChildClosingIndicator> with TickerProviderStateMixin {
   final GlobalKey childKey = GlobalKey();
   late AnimationController animationController;
   late bool isCollapsed;

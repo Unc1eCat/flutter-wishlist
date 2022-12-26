@@ -5,16 +5,19 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:local_hero/local_hero.dart';
 import 'package:vibration/vibration.dart';
 
-class ReorderableItemsController extends ChangeNotifier {
+class ReorderableItemsController<T> extends ChangeNotifier {
   bool _heroesEnabled = false;
   bool get heroesEnabled => _heroesEnabled;
+  T? _draggedItem;
 
-  void _onDragStart() {
+  void _onDragStart(T draggedItem) {
+    this._draggedItem = draggedItem;
     _heroesEnabled = true;
     notifyListeners();
   }
 
   void _onDragEnd() {
+    _draggedItem = null;
     _heroesEnabled = true;
     notifyListeners();
     Future.delayed(Duration(milliseconds: 500)).then((value) {
@@ -72,22 +75,27 @@ class _ReorderableItemState<T extends Object> extends State<ReorderableItem<T>> 
   @override
   Widget build(BuildContext context) {
     final data = ReorderableItemData<T>(widget.controller, widget.tag);
+    final childKey = GlobalKey();
+
+    final keyedChild = ScaleTransition(
+      key: childKey,
+      scale: animationController,
+      child: widget.child,
+    );
+
     final result = LongPressDraggable<ReorderableItemData<T>>(
       data: data,
       hapticFeedbackOnStart: false,
       onDragStarted: () {
         animationController.reverse();
         Vibration.vibrate(duration: 25);
-        widget.controller._onDragStart();
+        widget.controller._onDragStart(widget.tag);
       },
       onDragEnd: (details) {
         animationController.forward();
         widget.controller._onDragEnd();
       },
-      feedback: ScaleTransition(
-        scale: animationController,
-        child: widget.child,
-      ),
+      feedback: keyedChild,
       childWhenDragging: Opacity(opacity: 0, child: widget.child),
       child: AnimatedBuilder(
         animation: widget.controller,
@@ -96,7 +104,7 @@ class _ReorderableItemState<T extends Object> extends State<ReorderableItem<T>> 
                 tag: data,
                 child: child!,
               )
-            : child!,
+            : keyedChild,
         child: ScaleTransition(
           scale: animationController,
           child: widget.child,

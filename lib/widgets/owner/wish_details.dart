@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:local_hero/local_hero.dart';
+import 'package:scale_button/scale_button.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:vibration/vibration.dart';
 import 'package:wishlist_mobile/main.dart';
@@ -67,26 +68,20 @@ Widget _createCardFor(String userPk, int wishPk, m.Card card, {Key? key}) {
   // Later more types will be made
 }
 
-Widget _buildActionButton({
+Widget buildActionButton({
   required VoidCallback onPressed,
   required Color color,
-  required IconData icon,
-  String tooltip = '',
+  required IconData icon
 }) {
   return Padding(
     padding: const EdgeInsets.only(top: 10.0, bottom: 10.0, right: 15.0),
-    child: Tooltip(
-      margin: const EdgeInsets.all(10.0),
-      padding: const EdgeInsets.all(10.0),
-      message: tooltip,
-      child: HeavyTouchButton(
-        onPressed: onPressed,
-        child: DecoratedBox(
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: color),
-          child: Padding(
-            padding: const EdgeInsets.all(5.0),
-            child: Icon(icon),
-          ),
+    child: HeavyTouchButton(
+      onPressed: onPressed,
+      child: DecoratedBox(
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: color),
+        child: Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: Icon(icon),
         ),
       ),
     ),
@@ -178,7 +173,6 @@ class WishDetailsState extends State<WishDetails> with TickerProviderStateMixin<
   final GlobalKey body = GlobalKey();
   final loadingCardWidgets = _generateLoadingCards();
   final _enableTitleEditing = ValueNotifier<bool>(true);
-  final _willClose = ValueNotifier<bool>(false);
   late final ScrollController scrollController;
   late final AnimationController _actionButtonsController;
   late final TextEditingController _titleEditingController;
@@ -193,11 +187,6 @@ class WishDetailsState extends State<WishDetails> with TickerProviderStateMixin<
     _actionButtonsController = AnimationController(vsync: this, duration: const Duration(milliseconds: 150), value: 1);
     _titleEditingController = TextEditingController(text: bloc.wishOfUser(widget.userPk, widget.wishPk)!.title);
     cardReorderingController = ReorderableItemsController();
-    _willClose.addListener(() {
-      if (_willClose.value) {
-        Vibration.vibrate(duration: 70);
-      } else {}
-    });
 
     super.initState();
   }
@@ -205,7 +194,6 @@ class WishDetailsState extends State<WishDetails> with TickerProviderStateMixin<
   @override
   void dispose() {
     _titleEditingController.dispose();
-    _willClose.dispose();
     cardReorderingController.dispose();
     scrollController.dispose();
 
@@ -224,7 +212,7 @@ class WishDetailsState extends State<WishDetails> with TickerProviderStateMixin<
   @override
   Widget build(BuildContext context) {
     var bloc = WishlistBloc.of(context);
-    final cardExtent = (MediaQuery.of(context).size.width - 30 - (_cardCrossAxisCount - 1) * 10) / _cardCrossAxisCount;
+    final cardExtent = (MediaQuery.of(context).size.width - 30 - (_cardCrossAxisCount - 1) * 8) / _cardCrossAxisCount;
 
     print('asdasd');
 
@@ -265,18 +253,20 @@ class WishDetailsState extends State<WishDetails> with TickerProviderStateMixin<
                       bottom: 10,
                       left: 25,
                     ),
-                    child: ClosingIndicator(
+                    child: SingleChildClosingIndicator(
                       child: ValueListenableBuilder<bool>(
                         valueListenable: _enableTitleEditing,
                         builder: (context, value, child) {
                           print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
                           return value
                               ? TextField(
+                                  textCapitalization: TextCapitalization.sentences,
                                   scrollPadding: EdgeInsets.zero,
+                                  cursorWidth: 1.5,
+                                  cursorRadius: Radius.circular(2),
                                   decoration: InputDecoration.collapsed(border: InputBorder.none, hintText: ''),
                                   controller: _titleEditingController,
                                   onChanged: (value) => bloc.setTitleForWish(widget.userPk, widget.wishPk, value),
-                                  cursorRadius: Radius.circular(2),
                                   style: Theme.of(context).textTheme.titleMedium!,
                                 )
                               : GestureDetector(
@@ -302,17 +292,15 @@ class WishDetailsState extends State<WishDetails> with TickerProviderStateMixin<
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildActionButton(
+                        buildActionButton(
                           onPressed: () {},
                           color: Colors.indigo.shade400,
                           icon: Icons.archive_rounded,
-                          tooltip: 'Archive',
                         ),
-                        _buildActionButton(
+                        buildActionButton(
                           onPressed: () {},
                           color: Colors.red.shade400,
                           icon: Icons.delete_rounded,
-                          tooltip: 'Delete',
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 10.0),
@@ -364,8 +352,8 @@ class WishDetailsState extends State<WishDetails> with TickerProviderStateMixin<
                         }
                         return PinterestGrid(
                           crossAxisCount: _cardCrossAxisCount,
-                          crossAxisSpacing: 10,
-                          bottomMarginOnChildren: 16,
+                          crossAxisSpacing: 8,
+                          bottomMarginOnChildren: 12,
                           children: children,
                         );
                       }),

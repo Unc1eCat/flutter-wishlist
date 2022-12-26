@@ -9,10 +9,12 @@ import '../widgets/overscroll_closing.dart';
 
 class FallingStylePage<T> extends PageRoute<T> {
   final Widget child;
+  final double fallOffset;
 
   FallingStylePage({
     required this.child,
     RouteSettings? settings,
+    this.fallOffset = 0.6,
   }) : super(fullscreenDialog: false, settings: settings);
 
   @override
@@ -34,13 +36,13 @@ class FallingStylePage<T> extends PageRoute<T> {
 
   @override
   Animation<double> createAnimation() {
-    return CurvedAnimation(parent: super.createAnimation(), curve: Curves.easeOutCubic) ;
+    return CurvedAnimation(parent: super.createAnimation(), curve: Curves.easeOutCubic);
   }
 
   @override
   Widget buildTransitions(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
     return SlideTransition(
-      position: offsetTween(0, 0.6, 0.0, 0.0).animate(animation),
+      position: offsetTween(0, fallOffset, 0.0, 0.0).animate(animation),
       child: FadeTransition(
         opacity: animation,
         child: child,
@@ -52,5 +54,5 @@ class FallingStylePage<T> extends PageRoute<T> {
   bool get maintainState => false;
 
   @override
-  Duration get transitionDuration => const Duration(milliseconds: 400);
+  Duration get transitionDuration => const Duration(milliseconds: 600);
 }

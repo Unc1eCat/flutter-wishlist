@@ -59,8 +59,8 @@ class WishTitleChangedState extends WishlistState implements WithUserPk, WithWis
   int get wishPk => newWish.pk;
 }
 
-class CardChangedState extends WishlistState implements WithCardPk, WithUserPk, WithWishPk {
-  final TextCard newCard;
+class CardChangedState<T extends Card> extends WishlistState implements WithCardPk, WithUserPk, WithWishPk {
+  final T newCard;
   @override
   final String userPk;
   @override
@@ -180,8 +180,8 @@ class WishlistBloc extends Cubit<WishlistState> {
     return _users[permanentName]?.wishes.firstWhere((e) => e.pk == wishPk);
   }
 
-  Card? cardOf(String userPk, int wishPk, int cardPk) {
-    return wishOfUser(userPk, wishPk)!.cards.firstWhere((e) => e.pk == cardPk);
+  T? cardOf<T extends Card>(String userPk, int wishPk, int cardPk) {
+    return wishOfUser(userPk, wishPk)!.cards.firstWhere((e) => e.pk == cardPk) as T;
   }
 
   int? indexOfCard(String userPk, int wishPk, int cardPk) => wishOfUser(userPk, wishPk)?.cards.indexWhere((e) => e.pk == cardPk);

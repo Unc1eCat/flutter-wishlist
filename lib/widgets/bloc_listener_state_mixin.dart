@@ -9,13 +9,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 mixin BlocListenerStateMixin<T extends StateStreamableSource<S>, S, W extends StatefulWidget> on State<W> {
   late StreamSubscription<S> _subscription;
 
-  T? get bloc => null;
+  T get bloc => BlocProvider.of<T>(context);
 
   @override
   @mustCallSuper
   void initState() {
     super.initState();
-    final b = bloc ?? BlocProvider.of<T>(context);
+    final b = bloc;
     _subscription = b.stream.listen((event) => blocHandler(b, event));
   }
 
