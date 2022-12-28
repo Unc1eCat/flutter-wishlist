@@ -77,7 +77,7 @@ class MyAppState extends State<MyApp> {
               selectionHandleColor: Colors.amberAccent[100],
               selectionColor: Colors.orange[300]?.withOpacity(0.4),
             ),
-            primaryColor: Colors.pinkAccent,
+            primaryColor: Colors.pink[500],
             textTheme: ThemeData.dark().textTheme.copyWith(
                   titleMedium: const TextStyle(fontSize: 18, letterSpacing: 0.5),
                   bodyMedium: const TextStyle(fontSize: 16),

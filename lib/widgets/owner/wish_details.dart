@@ -22,6 +22,7 @@ import 'package:wishlist_mobile/widgets/pinterest_grid.dart';
 import 'package:wishlist_mobile/widgets/reorderable_item.dart';
 import 'package:wishlist_mobile/widgets/shifted_bouncing_scroll_physics.dart';
 import 'package:wishlist_mobile/widgets/shimmer_card.dart';
+import 'package:wishlist_mobile/widgets/simple_card.dart';
 import '../../utils/math.dart';
 import '../../utils/color.dart';
 
@@ -68,11 +69,7 @@ Widget _createCardFor(String userPk, int wishPk, m.Card card, {Key? key}) {
   // Later more types will be made
 }
 
-Widget buildActionButton({
-  required VoidCallback onPressed,
-  required Color color,
-  required IconData icon
-}) {
+Widget buildActionButton({required VoidCallback onPressed, required Color color, required IconData icon}) {
   return Padding(
     padding: const EdgeInsets.only(top: 10.0, bottom: 10.0, right: 15.0),
     child: HeavyTouchButton(
@@ -86,6 +83,29 @@ Widget buildActionButton({
       ),
     ),
   );
+}
+
+class CheckHeaderDelegate extends SliverPersistentHeaderDelegate {
+  final Widget child;
+  final double topPadding;
+
+  CheckHeaderDelegate({required this.child, this.topPadding = 0});
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return child;
+  }
+
+  @override
+  double get maxExtent => 50 + topPadding;
+
+  @override
+  double get minExtent => 50 + topPadding;
+
+  @override
+  bool shouldRebuild(covariant CheckHeaderDelegate oldDelegate) {
+    return child != oldDelegate.child || topPadding != oldDelegate.topPadding;
+  }
 }
 
 class WishDetailsHeaderDelegate extends SliverPersistentHeaderDelegate {
@@ -243,6 +263,35 @@ class WishDetailsState extends State<WishDetails> with TickerProviderStateMixin<
           controller: scrollController,
           physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
           slivers: [
+            // SliverPersistentHeader(
+            //   pinned: true,
+            //   delegate: CheckHeaderDelegate(
+            //     topPadding: MediaQuery.of(context).padding.top,
+            //     child: SimpleCard(
+            //       shape: const RoundedRectangleBorder(
+            //         borderRadius: BorderRadius.only(
+            //           bottomLeft: Radius.circular(20),
+            //           bottomRight: Radius.circular(20),
+            //         ),
+            //       ),
+            //       color: Theme.of(context).primaryColor,
+            //       child: Padding(
+            //         padding: EdgeInsets.only(bottom: 10.0, top: MediaQuery.of(context).padding.top + 15),
+            //         child: Row(
+            //           mainAxisAlignment: MainAxisAlignment.center,
+            //           children: [
+            //             Icon(Icons.check_rounded),
+            //             SizedBox(width: 8),
+            //             Text(
+            //               'Someone will do the wish',
+            //               style: Theme.of(context).textTheme.labelLarge,
+            //             ),
+            //           ],
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+            // ),
             SliverPersistentHeader(
                 delegate: WishDetailsHeaderDelegate(
                   gradientColor: Color.lerp(Theme.of(context).colorScheme.onSurface.rgbInverted, Colors.black, 0.7)!,

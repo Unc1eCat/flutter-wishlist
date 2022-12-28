@@ -11,11 +11,25 @@ class FallingStylePage<T> extends PageRoute<T> {
   final Widget child;
   final double fallOffset;
 
+  late final CurvedAnimation transitionAnimation;
+
   FallingStylePage({
     required this.child,
     RouteSettings? settings,
     this.fallOffset = 0.6,
   }) : super(fullscreenDialog: false, settings: settings);
+
+  @override
+  void install() {
+    super.install();
+    transitionAnimation = CurvedAnimation(parent: animation!, curve: Curves.easeOutCubic);
+  }
+
+  @override
+  void dispose() {
+    transitionAnimation.dispose();
+    super.dispose();
+  }
 
   @override
   Color? get barrierColor => Colors.black54;
@@ -34,24 +48,24 @@ class FallingStylePage<T> extends PageRoute<T> {
     return child;
   }
 
-  @override
-  Animation<double> createAnimation() {
-    return CurvedAnimation(parent: super.createAnimation(), curve: Curves.easeOutCubic);
-  }
+  // @override
+  // Animation<double> createAnimation() {
+  //   return CurvedAnimation(parent: super.createAnimation(), curve: Curves.easeOutCubic);
+  // }
 
   @override
   Widget buildTransitions(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
     return SlideTransition(
-      position: offsetTween(0, fallOffset, 0.0, 0.0).animate(animation),
+      position: offsetTween(0, fallOffset, 0.0, 0.0).animate(transitionAnimation),
       child: FadeTransition(
-        opacity: animation,
+        opacity: transitionAnimation,
         child: child,
       ),
     );
   }
 
   @override
-  bool get maintainState => false;
+  bool get maintainState => true;
 
   @override
   Duration get transitionDuration => const Duration(milliseconds: 600);

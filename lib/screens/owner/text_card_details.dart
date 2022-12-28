@@ -81,9 +81,6 @@ class _TextCardDetailsState extends State<TextCardDetails> with TickerProviderSt
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
 
-    final borderColor = theme.colorScheme.onSurface.withOpacity(0.025);
-    final cardColor = theme.canvasColor.hsl.withClosestLerpOfLightness(0.7).rgb;
-
     return GestureDetector(
       onTapUp: (details) => FocusManager.instance.primaryFocus?.unfocus(),
       child: Material(

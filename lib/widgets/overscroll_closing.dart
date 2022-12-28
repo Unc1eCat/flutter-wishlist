@@ -69,9 +69,6 @@ class OverscrollClosingState extends State<OverscrollClosing> with _DisposeDesha
   }
 
   bool _handleNotification(ScrollNotification notification) {
-    if (notification is ScrollEndNotification) {
-      print(notification.metrics.pixels);
-    }
     if (notification.metrics.pixels <= notification.metrics.minScrollExtent - widget.armingOverscroll) {
       // There is enough overscroll to trigger arming
       if ((notification is ScrollStartNotification && notification.dragDetails != null) ||
