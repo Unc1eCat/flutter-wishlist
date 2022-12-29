@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:wishlist_mobile/screens/delay_page_transition.dart';
 
 import '../utils/math.dart';
+import '../widgets/ancestor_route.dart';
 import '../widgets/overscroll_closing.dart';
 
 class FallingStylePage<T> extends PageRoute<T> {
@@ -45,7 +46,10 @@ class FallingStylePage<T> extends PageRoute<T> {
 
   @override
   Widget buildPage(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
-    return child;
+    return AncestorRoute(
+      route: this,
+      child: child,
+    );
   }
 
   // @override

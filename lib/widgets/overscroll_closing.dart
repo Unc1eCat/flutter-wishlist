@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -10,6 +11,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vibration/vibration.dart';
 import 'package:wishlist_mobile/icons.dart';
+import 'package:wishlist_mobile/widgets/ancestor_route.dart';
 
 import '../utils/math.dart';
 
@@ -215,6 +217,121 @@ class _SingleChildClosingIndicatorState extends State<SingleChildClosingIndicato
               ),
               SizedBox(height: 10),
               KeyedSubtree(key: childKey, child: widget.child)
+            ],
+          );
+  }
+}
+
+class DisarmingTopPanel extends StatefulWidget {
+  final Widget body;
+  final Widget panel;
+  final double panelExtent;
+  final double panelOverlap;
+  final bool addWindowTopPadding;
+
+  const DisarmingTopPanel({
+    Key? key,
+    required this.body,
+    required this.panel,
+    required this.panelExtent,
+    this.panelOverlap = 0,
+    this.addWindowTopPadding = true,
+  }) : super(key: key);
+
+  @override
+  State<DisarmingTopPanel> createState() => _DisarmingTopPanelState();
+}
+
+class _DisarmingTopPanelState extends State<DisarmingTopPanel> with TickerProviderStateMixin {
+  final bodyKey = GlobalKey();
+  late final AnimationController _panelController;
+  late final Animation<Offset> _panelAnimation;
+  late OverscrollClosingState overscrollClosing;
+  late bool _collapsed;
+  Animation? routeAnimation;
+
+  set collapsed(bool value) {
+    if (_collapsed != value) {
+      setState(() => _collapsed = value);
+    }
+  }
+
+  bool get revealed => !overscrollClosing.isArmed && (routeAnimation?.isCompleted ?? true);
+
+  @override
+  void initState() {
+    overscrollClosing = context.findAncestorStateOfType<OverscrollClosingState>()!;
+    overscrollClosing.addListener(_handlePossibleReveal);
+
+    _panelController = AnimationController(vsync: this, duration: const Duration(milliseconds: 250));
+    _panelAnimation = offsetTween(0, -1.2, 0, 0).animate(CurvedAnimation(parent: _panelController, curve: Curves.easeOutQuad));
+
+    _collapsed = _panelController.status == AnimationStatus.dismissed;
+
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    final route = AncestorRoute.of(context);
+    final newRouteAnimation = route is TransitionRoute ? route.animation : null;
+
+    if (routeAnimation != newRouteAnimation) {
+      routeAnimation?.removeStatusListener(_handleRouteAnimationStatus);
+      newRouteAnimation?.addStatusListener(_handleRouteAnimationStatus);
+      routeAnimation = newRouteAnimation;
+    }
+
+    super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    _panelController.dispose();
+    overscrollClosing.removeListener(_handlePossibleReveal);
+    super.dispose();
+  }
+
+  void _handleRouteAnimationStatus(AnimationStatus status) {
+    _handlePossibleReveal();
+  }
+
+  void _handlePossibleReveal() {
+    if (revealed) {
+      collapsed = false;
+      _panelController.forward();
+    } else {
+      _panelController.reverse().then((value) => collapsed = true);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final finalPanelExtent = widget.addWindowTopPadding ? MediaQuery.of(context).padding.top + widget.panelExtent : widget.panelExtent;
+    return _collapsed
+        ? Padding(
+            padding: EdgeInsets.only(top: finalPanelExtent - widget.panelOverlap ),
+            child: KeyedSubtree(
+              key: bodyKey,
+              child: widget.body,
+            ),
+          )
+        : Stack(
+            children: [
+              Positioned.fill(
+                top: finalPanelExtent - widget.panelOverlap,
+                child: KeyedSubtree(
+                  key: bodyKey,
+                  child: widget.body,
+                ),
+              ),
+              SlideTransition(
+                position: _panelAnimation,
+                child: SizedBox(
+                  height: finalPanelExtent,
+                  child: widget.panel,
+                ),
+              ),
             ],
           );
   }

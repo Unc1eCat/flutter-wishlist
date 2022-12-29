@@ -7,11 +7,14 @@ class SimpleCard extends StatelessWidget {
   final Widget child;
   final ShapeBorder? shape;
   final Color? color;
+  final double? elevation;
+
   const SimpleCard({
     Key? key,
     required this.child,
     this.color,
     this.shape,
+    this.elevation,
   }) : super(key: key);
 
   @override
@@ -26,7 +29,7 @@ class SimpleCard extends StatelessWidget {
         clipper: ShapeBorderClipper(shape: shp),
         color: color ?? th.color ?? theme.cardColor,
         clipBehavior: th.clipBehavior ?? Clip.none,
-        elevation: th.elevation ?? 4,
+        elevation: elevation ?? th.elevation ?? 4,
         shadowColor: color == null ? th.shadowColor ?? theme.shadowColor : Color.lerp(color, th.shadowColor ?? theme.shadowColor, 0.4)!,
         child: _ShapeBorderPaint(
           shape: shp,

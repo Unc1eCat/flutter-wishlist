@@ -10,11 +10,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:local_hero/local_hero.dart';
+import 'package:provider/provider.dart';
 import 'package:scale_button/scale_button.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:vibration/vibration.dart';
 import 'package:wishlist_mobile/main.dart';
 import 'package:wishlist_mobile/screens/falling_style_page.dart';
+import 'package:wishlist_mobile/utils/provider.dart';
 import 'package:wishlist_mobile/widgets/bloc_listener_state_mixin.dart';
 import 'package:wishlist_mobile/widgets/heavy_touch_button.dart';
 import 'package:wishlist_mobile/widgets/owner/image_card.dart';
@@ -56,6 +58,7 @@ class _GlobalWishCardKey<T extends State<StatefulWidget>> extends GlobalKey<T> {
   int get hashCode => Object.hash(userPk, wishPk, cardPk);
 }
 
+// TODO: Move this data and the card cross axis extent into a separate widget
 int get _cardCrossAxisCount => (WidgetsBinding.instance.window.physicalSize.width / WidgetsBinding.instance.window.devicePixelRatio / 170).floor();
 
 Widget _createCardFor(String userPk, int wishPk, m.Card card, {Key? key}) {
@@ -85,29 +88,6 @@ Widget buildActionButton({required VoidCallback onPressed, required Color color,
   );
 }
 
-class CheckHeaderDelegate extends SliverPersistentHeaderDelegate {
-  final Widget child;
-  final double topPadding;
-
-  CheckHeaderDelegate({required this.child, this.topPadding = 0});
-
-  @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return child;
-  }
-
-  @override
-  double get maxExtent => 50 + topPadding;
-
-  @override
-  double get minExtent => 50 + topPadding;
-
-  @override
-  bool shouldRebuild(covariant CheckHeaderDelegate oldDelegate) {
-    return child != oldDelegate.child || topPadding != oldDelegate.topPadding;
-  }
-}
-
 class WishDetailsHeaderDelegate extends SliverPersistentHeaderDelegate {
   final Widget child;
   final Color gradientColor;
@@ -116,7 +96,7 @@ class WishDetailsHeaderDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    var ratio = shrinkOffset / maxExtent;
+    final ratio = shrinkOffset / maxExtent;
     return DecoratedBox(
       decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -138,13 +118,13 @@ class WishDetailsHeaderDelegate extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  OverScrollHeaderStretchConfiguration? get stretchConfiguration => OverScrollHeaderStretchConfiguration();
-
-  @override
   double get maxExtent => 150;
 
   @override
   double get minExtent => 120;
+
+  @override
+  OverScrollHeaderStretchConfiguration? get stretchConfiguration => OverScrollHeaderStretchConfiguration();
 
   @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {
@@ -231,8 +211,8 @@ class WishDetailsState extends State<WishDetails> with TickerProviderStateMixin<
 
   @override
   Widget build(BuildContext context) {
-    var bloc = WishlistBloc.of(context);
-    final cardExtent = (MediaQuery.of(context).size.width - 30 - (_cardCrossAxisCount - 1) * 8) / _cardCrossAxisCount;
+    final bloc = WishlistBloc.of(context);
+    final th = Theme.of(context);
 
     print('asdasd');
 
@@ -259,123 +239,113 @@ class WishDetailsState extends State<WishDetails> with TickerProviderStateMixin<
           n.pop();
           Future.delayed(const Duration(milliseconds: 3000)).then((value) => showWishDetailScreen(n.context, 'abc', 0));
         },
-        child: CustomScrollView(
-          controller: scrollController,
-          physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-          slivers: [
-            // SliverPersistentHeader(
-            //   pinned: true,
-            //   delegate: CheckHeaderDelegate(
-            //     topPadding: MediaQuery.of(context).padding.top,
-            //     child: SimpleCard(
-            //       shape: const RoundedRectangleBorder(
-            //         borderRadius: BorderRadius.only(
-            //           bottomLeft: Radius.circular(20),
-            //           bottomRight: Radius.circular(20),
-            //         ),
-            //       ),
-            //       color: Theme.of(context).primaryColor,
-            //       child: Padding(
-            //         padding: EdgeInsets.only(bottom: 10.0, top: MediaQuery.of(context).padding.top + 15),
-            //         child: Row(
-            //           mainAxisAlignment: MainAxisAlignment.center,
-            //           children: [
-            //             Icon(Icons.check_rounded),
-            //             SizedBox(width: 8),
-            //             Text(
-            //               'Someone will do the wish',
-            //               style: Theme.of(context).textTheme.labelLarge,
-            //             ),
-            //           ],
-            //         ),
-            //       ),
-            //     ),
-            //   ),
-            // ),
-            SliverPersistentHeader(
-                delegate: WishDetailsHeaderDelegate(
-                  gradientColor: Color.lerp(Theme.of(context).colorScheme.onSurface.rgbInverted, Colors.black, 0.7)!,
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                      top: 10 + MediaQuery.of(context).viewPadding.top,
-                      right: 20,
-                      bottom: 10,
-                      left: 25,
+        child: DisarmingTopPanel(
+          panelExtent: 50,
+          panelOverlap: 7,
+          panel: DecoratedBox(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(bottomLeft: Radius.circular(35), bottomRight: Radius.circular(35)),
+                color: Colors.green[400],
+                boxShadow: [BoxShadow(color: Colors.green[400]!.hsv.withSaturationStretched(0.8).rgb.withOpacity(0.5), blurRadius: 10, spreadRadius: 5)]),
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.check_rounded),
+                    SizedBox(width: 8),
+                    Text(
+                      'Someone has accepted the wish',
+                      style: th.textTheme.labelLarge,
                     ),
-                    child: SingleChildClosingIndicator(
-                      child: ValueListenableBuilder<bool>(
-                        valueListenable: _enableTitleEditing,
-                        builder: (context, value, child) {
-                          print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
-                          return value
-                              ? TextField(
-                                  textCapitalization: TextCapitalization.sentences,
-                                  scrollPadding: EdgeInsets.zero,
-                                  cursorWidth: 1.5,
-                                  cursorRadius: Radius.circular(2),
-                                  decoration: InputDecoration.collapsed(border: InputBorder.none, hintText: ''),
-                                  controller: _titleEditingController,
-                                  onChanged: (value) => bloc.setTitleForWish(widget.userPk, widget.wishPk, value),
-                                  style: Theme.of(context).textTheme.titleMedium!,
-                                )
-                              : GestureDetector(
-                                  onTapUp: (_) => scrollController.animateTo(0, duration: const Duration(milliseconds: 700), curve: Curves.easeOutBack),
-                                  child: ValueListenableBuilder<TextEditingValue>(
-                                    valueListenable: _titleEditingController,
-                                    builder: (context, value, child) => Text(value.text, style: Theme.of(context).textTheme.titleMedium!),
-                                  ),
-                                );
-                        },
+                  ],
+                ),
+              ),
+            ),
+          ),
+          body: CustomScrollView(
+            controller: scrollController,
+            physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+            slivers: [
+              SliverPersistentHeader(
+                  delegate: WishDetailsHeaderDelegate(
+                    gradientColor: Color.lerp(th.colorScheme.onSurface.rgbInverted, Colors.black, 0.7)!,
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 30, right: 20, bottom: 10, left: 25),
+                      child: SingleChildClosingIndicator(
+                        child: ValueListenableBuilder<bool>(
+                          valueListenable: _enableTitleEditing,
+                          builder: (context, value, child) {
+                            print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+                            return value
+                                ? TextField(
+                                    textCapitalization: TextCapitalization.sentences,
+                                    scrollPadding: EdgeInsets.zero,
+                                    cursorWidth: 1.5,
+                                    cursorRadius: Radius.circular(2),
+                                    decoration: InputDecoration.collapsed(border: InputBorder.none, hintText: ''),
+                                    controller: _titleEditingController,
+                                    onChanged: (value) => bloc.setTitleForWish(widget.userPk, widget.wishPk, value),
+                                    style: th.textTheme.titleMedium!,
+                                  )
+                                : GestureDetector(
+                                    onTapUp: (_) => scrollController.animateTo(0, duration: const Duration(milliseconds: 700), curve: Curves.easeOutBack),
+                                    child: ValueListenableBuilder<TextEditingValue>(
+                                      valueListenable: _titleEditingController,
+                                      builder: (context, value, child) => Text(value.text, style: th.textTheme.titleMedium!),
+                                    ),
+                                  );
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                  pinned: true),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  child: FadeTransition(
+                    opacity: _actionButtonsController,
+                    child: SlideTransition(
+                      position: Tween<Offset>(begin: Offset(0, 0.5), end: Offset(0, 0)).animate(_actionButtonsController),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          buildActionButton(
+                            onPressed: () {},
+                            color: Colors.indigo.shade400,
+                            icon: Icons.archive_rounded,
+                          ),
+                          buildActionButton(
+                            onPressed: () {},
+                            color: Colors.red.shade400,
+                            icon: Icons.delete_rounded,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10.0),
+                            child: HeavyTouchButton(
+                              onPressed: () {},
+                              child: DecoratedBox(
+                                decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.purple.shade400),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: Row(children: [
+                                    const Icon(Icons.add_box_rounded),
+                                    Text('  ADD NEW CARD!', style: th.textTheme.button),
+                                  ]),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
                 ),
-                pinned: true),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                child: FadeTransition(
-                  opacity: _actionButtonsController,
-                  child: SlideTransition(
-                    position: Tween<Offset>(begin: Offset(0, 0.5), end: Offset(0, 0)).animate(_actionButtonsController),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        buildActionButton(
-                          onPressed: () {},
-                          color: Colors.indigo.shade400,
-                          icon: Icons.archive_rounded,
-                        ),
-                        buildActionButton(
-                          onPressed: () {},
-                          color: Colors.red.shade400,
-                          icon: Icons.delete_rounded,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10.0),
-                          child: HeavyTouchButton(
-                            onPressed: () {},
-                            child: DecoratedBox(
-                              decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.purple.shade400),
-                              child: Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Row(children: [
-                                  const Icon(Icons.add_box_rounded),
-                                  Text('  ADD NEW CARD!', style: Theme.of(context).textTheme.button),
-                                ]),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
               ),
-            ),
-            SliverToBoxAdapter(
-              child: Align(
-                alignment: Alignment.topCenter,
+              SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.all(15.0),
                   child: BlocBuilder<WishlistBloc, WishlistState>(
@@ -385,7 +355,9 @@ class WishDetailsState extends State<WishDetails> with TickerProviderStateMixin<
                           (current as WithUserPk).userPk == widget.userPk &&
                           (current as WithWishPk).wishPk == widget.wishPk,
                       builder: (context, state) {
+                        final cardExtent = (context.selectMediaQuery((data) => data.size.width) - 30 - (_cardCrossAxisCount - 1) * 8) / _cardCrossAxisCount;
                         final w = bloc.wishOfUser(widget.userPk, widget.wishPk)!;
+
                         final children = <Widget>[];
                         for (var i = 0; i < w.cards.length; i++) {
                           final e = w.cards[i];
@@ -399,6 +371,7 @@ class WishDetailsState extends State<WishDetails> with TickerProviderStateMixin<
                             child: SizedBox(width: cardExtent, child: _createCardFor(widget.userPk, widget.wishPk, e)),
                           ));
                         }
+
                         return PinterestGrid(
                           crossAxisCount: _cardCrossAxisCount,
                           crossAxisSpacing: 8,
@@ -408,8 +381,8 @@ class WishDetailsState extends State<WishDetails> with TickerProviderStateMixin<
                       }),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -419,16 +392,18 @@ class WishDetailsState extends State<WishDetails> with TickerProviderStateMixin<
 void showWishDetailScreen(BuildContext context, String permanentName, int wishPk) {
   Navigator.of(context).push(
     FallingStylePage(
-      child: GestureDetector(
-        onTapUp: (details) => FocusManager.instance.primaryFocus?.unfocus(),
-        child: Material(
-          color: Colors.transparent,
-          child: WishDetails(
-            wishPk: wishPk,
-            userPk: permanentName,
+      child: Builder(builder: (context) {
+        return GestureDetector(
+          onTapUp: (details) => FocusManager.instance.primaryFocus?.unfocus(),
+          child: Material(
+            color: Colors.transparent,
+            child: WishDetails(
+              wishPk: wishPk,
+              userPk: permanentName,
+            ),
           ),
-        ),
-      ),
+        );
+      }),
     ),
   );
 }

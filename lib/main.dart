@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:local_hero/local_hero.dart';
+import 'package:provider/provider.dart';
 import 'package:wishlist_mobile/bloc/wishlist_bloc.dart';
 import 'package:wishlist_mobile/models.dart';
 import 'package:wishlist_mobile/screens/wishlist_screen.dart';
@@ -77,11 +78,15 @@ class MyAppState extends State<MyApp> {
               selectionHandleColor: Colors.amberAccent[100],
               selectionColor: Colors.orange[300]?.withOpacity(0.4),
             ),
-            primaryColor: Colors.pink[500],
+            primaryColor: Colors.pinkAccent,
             textTheme: ThemeData.dark().textTheme.copyWith(
                   titleMedium: const TextStyle(fontSize: 18, letterSpacing: 0.5),
                   bodyMedium: const TextStyle(fontSize: 16),
                 ),
+          ),
+          builder: (context, child) => Provider<MediaQueryData>(
+            create: (_) => MediaQuery.of(context),
+            child: child
           ),
           home: WishlistScreen(),
         ),
