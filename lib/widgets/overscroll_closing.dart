@@ -102,7 +102,7 @@ class ClosingIndicator extends StatefulWidget {
   State<ClosingIndicator> createState() => _ClosingIndicatorState();
 }
 
-class _ClosingIndicatorState extends State<ClosingIndicator> with SingleTickerProviderStateMixin {
+class _ClosingIndicatorState extends State<ClosingIndicator> with TickerProviderStateMixin {
   late AnimationController _controller;
   late OverscrollClosingState overscrollClosing;
 
@@ -127,9 +127,9 @@ class _ClosingIndicatorState extends State<ClosingIndicator> with SingleTickerPr
 
   @override
   void dispose() {
-    super.dispose();
     _controller.dispose();
     overscrollClosing.removeListener(_handleOverscrollClosing);
+    super.dispose();
   }
 
   @override
@@ -273,8 +273,7 @@ class _DisarmingTopPanelState extends State<DisarmingTopPanel> with TickerProvid
 
   @override
   void didChangeDependencies() {
-    final route = AncestorRoute.of(context);
-    final newRouteAnimation = route is TransitionRoute ? route.animation : null;
+    final newRouteAnimation = ModalRoute.of(context)?.animation;
 
     if (routeAnimation != newRouteAnimation) {
       routeAnimation?.removeStatusListener(_handleRouteAnimationStatus);

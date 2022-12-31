@@ -17,7 +17,7 @@ class HeavyTouchButton extends StatefulWidget {
 
   const HeavyTouchButton({
     required this.child,
-    this.animationDuration = const Duration(microseconds: 120),
+    this.animationDuration = const Duration(milliseconds: 100),
     this.onPressed,
     Key? key,
     this.pressedScale = 0.85,
@@ -57,7 +57,8 @@ class _HeavyTouchButtonState extends State<HeavyTouchButton> with TickerProvider
   void _onTapUp(AnimationStatus status) {
     if (!_anim.isAnimating && _anim.value <= widget.pressedScale) {
       _anim.removeStatusListener(_onTapUp);
-      _anim.animateTo(1.0).then((value) => widget.onAnimationEnd?.call());
+      _anim.forward().then((value) => widget.onAnimationEnd?.call());
+      // Future.delayed(widget.animationDuration).then((value) => widget.onAnimationEnd?.call());
       widget.onPressed?.call();
     }
   }
@@ -66,21 +67,24 @@ class _HeavyTouchButtonState extends State<HeavyTouchButton> with TickerProvider
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTapDown: (_) => _anim.animateBack(widget.pressedScale),
-      onTapCancel: () => _anim.animateTo(1.0),
-      onLongPressStart: widget.onLongPress == null ? null : (_) => widget.onLongPress?.call(),
-      onLongPressEnd: widget.onUp == null ? null : (_) => widget.onUp?.call(),
+      onTapDown: (_) => _anim.reverse(),
+      onTapCancel: () => _anim.forward(),
+      // onLongPressStart: widget.onLongPress == null ? null : (_) => widget.onLongPress?.call(),
+      // onLongPressEnd: widget.onUp == null ? null : (_) => widget.onUp?.call(),
       onTapUp: (_) {
         widget.onUp?.call();
         if (widget.fullAnimation) {
           if (!_anim.isAnimating && _anim.value <= widget.pressedScale) {
-            _anim.animateTo(1.0).then((value) => widget.onAnimationEnd?.call());
+            _anim.forward().then((value) {
+              widget.onAnimationEnd?.call();
+            });
             widget.onPressed?.call();
           } else {
             _anim.addStatusListener(_onTapUp);
           }
         } else {
-          _anim.animateTo(1.0).then((value) => widget.onAnimationEnd?.call());
+          _anim.forward().then((value) => widget.onAnimationEnd?.call());
+          // Future.delayed(widget.animationDuration).then((value) => widget.onAnimationEnd?.call());
           widget.onPressed?.call();
         }
       },

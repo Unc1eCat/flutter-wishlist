@@ -9,18 +9,21 @@ import '../../utils/color.dart';
 import '../shimmer_card.dart';
 import '../../models.dart' as m;
 
-class ImageCard extends StatelessWidget {
+// TODO: Beautiful aniamtion on when the text card is removed or added during edit 
+// The name is suffixed with "Widget" in order to avoid clash with eponymous model class
+class ImageCardWidget extends StatelessWidget {
   final String userPk;
   final int wishPk;
   final int cardPk;
 
-  ImageCard({Key? key, required this.cardPk, required this.wishPk, required this.userPk}) : super(key: key);
+  ImageCardWidget({Key? key, required this.cardPk, required this.wishPk, required this.userPk}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final borderColor = theme.colorScheme.onSurface.withOpacity(0.025);
     final cardColor = theme.canvasColor.hsl.withClosestLerpOfLightness(0.7).rgb;
+    final text = (WishlistBloc.of(context).cardOf(userPk, wishPk, cardPk) as m.ImageCard).text;
 
     final imageChild = PhysicalModel(
       color: Colors.transparent,
@@ -44,6 +47,11 @@ class ImageCard extends StatelessWidget {
         ),
       ),
     );
+
+    if (text == null) {
+      return imageChild;
+    }
+
     final textChild = PhysicalModel(
       borderRadius: BorderRadius.circular(20),
       elevation: 4,
@@ -59,7 +67,7 @@ class ImageCard extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.only(left: 15, right: 5, top: 26, bottom: 25),
             child: Text(
-              (WishlistBloc.of(context).cardOf(userPk, wishPk, cardPk) as m.ImageCard).text,
+              (WishlistBloc.of(context).cardOf(userPk, wishPk, cardPk) as m.ImageCard).text!,
               style: theme.textTheme.bodyMedium,
             ),
           ),

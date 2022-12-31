@@ -49,6 +49,8 @@ extension HSLColorUtilExtension on HSLColor {
   HSLColor get withInvertedSaturation => withSaturation(1.0 - saturation);
   HSLColor get withInvertedLightness => withLightness(1.0 - lightness);
 
+  HSLColor get withRoundedLightness => withLightness(lightness.round().toDouble());
+
   /// stretch is from 0.0 to 2.0. 
   /// 1.0 is the same color, 
   /// 2.0 is white, 

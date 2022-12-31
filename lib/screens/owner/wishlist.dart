@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:wishlist_mobile/widgets/owner/wish_details.dart';
+import 'package:wishlist_mobile/screens/owner/wish_details.dart';
 import 'package:wishlist_mobile/widgets/owner/list_iitem.dart';
 
 class WishlistScreen extends StatefulWidget {

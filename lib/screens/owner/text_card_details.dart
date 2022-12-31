@@ -6,12 +6,13 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/widgets.dart';
 import 'package:wishlist_mobile/bloc/wishlist_bloc.dart';
 import 'package:wishlist_mobile/models.dart';
+import 'package:wishlist_mobile/screens/action_button_dialog.dart';
 import 'package:wishlist_mobile/utils/color.dart';
 import 'package:wishlist_mobile/utils/math.dart';
 import 'package:wishlist_mobile/widgets/bloc_listener_state_mixin.dart';
 import 'package:wishlist_mobile/widgets/overscroll_closing.dart';
 import 'package:wishlist_mobile/widgets/owner/text_card.dart' show buildCardForTextCard;
-import 'package:wishlist_mobile/widgets/owner/wish_details.dart';
+import 'package:wishlist_mobile/screens/owner/wish_details.dart';
 
 class TextCardDetails extends StatefulWidget {
   final String userPk;
@@ -106,11 +107,52 @@ class _TextCardDetailsState extends State<TextCardDetails> with TickerProviderSt
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          buildActionButton(
-                            onPressed: () {},
-                            color: Colors.red.shade400,
-                            icon: Icons.delete_rounded,
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10.0, bottom: 10.0, right: 15.0),
+                            child: DialogActionButton(
+                              tag: 'dtc',
+                              buttonColor: Colors.red.shade400,
+                              icon: Icons.delete_rounded,
+                              body: Text('Are you sure that you want to delete the card?'),
+                              iconColor: Colors.white,
+                              underBody: [
+                                SizedBox(height: 30),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    buildActionButtonDialogOption(
+                                      context,
+                                      'Delete the card',
+                                      Icons.delete_rounded,
+                                      Colors.red[400],
+                                      () {
+                                        bloc.deleteCard(widget.userPk, widget.wishPk, widget.cardPk);
+                                        Navigator.of(context).pop();
+                                        Future.delayed(Duration(milliseconds: 100)).then((value) => Navigator.of(context).pop());
+                                      },
+                                    ),
+                                    buildActionButtonDialogOption(
+                                      context,
+                                      'Leave the card in place',
+                                      Icons.arrow_back_rounded,
+                                      Colors.white,
+                                      () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
                           ),
+                          // buildActionButton(
+                          //   onPressed: () {
+                          //     bloc.deleteCard(widget.userPk, widget.wishPk, widget.cardPk);
+                          //     Navigator.of(context).pop();
+                          //   },
+                          //   color: Colors.red.shade400,
+                          //   icon: Icons.delete_rounded,
+                          // ),
                           buildActionButton(
                             onPressed: () {},
                             color: Colors.amber[600]!,

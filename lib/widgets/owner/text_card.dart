@@ -6,8 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scale_button/scale_button.dart';
 import 'package:wishlist_mobile/bloc/wishlist_bloc.dart';
 import 'package:wishlist_mobile/screens/falling_style_page.dart';
-import 'package:wishlist_mobile/screens/owner/text_card_details.dart';
 import 'package:wishlist_mobile/widgets/heavy_touch_button.dart';
+import '../../screens/owner/text_card_details.dart';
 import '../../utils/color.dart';
 
 import '../../models.dart' as m;
@@ -93,12 +93,13 @@ Widget _buildFlightShuttle(BuildContext flightContext, Animation<double> animati
   );
 }
 
-class TextCard extends StatelessWidget {
+// The name is suffixed with "Widget" in order to avoid clash with eponymous model class
+class TextCardWidget extends StatelessWidget {
   final int cardPk;
   final int wishPk;
   final String userPk;
 
-  const TextCard({Key? key, required this.cardPk, required this.wishPk, required this.userPk}) : super(key: key);
+  const TextCardWidget({Key? key, required this.cardPk, required this.wishPk, required this.userPk}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

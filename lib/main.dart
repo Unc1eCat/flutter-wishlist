@@ -5,7 +5,7 @@ import 'package:local_hero/local_hero.dart';
 import 'package:provider/provider.dart';
 import 'package:wishlist_mobile/bloc/wishlist_bloc.dart';
 import 'package:wishlist_mobile/models.dart';
-import 'package:wishlist_mobile/screens/wishlist_screen.dart';
+import 'package:wishlist_mobile/screens/owner/wishlist.dart';
 
 void main() {
   // debugRepaintRainbowEnabled = true;
@@ -84,9 +84,10 @@ class MyAppState extends State<MyApp> {
                   bodyMedium: const TextStyle(fontSize: 16),
                 ),
           ),
-          builder: (context, child) => Provider<MediaQueryData>(
-            create: (_) => MediaQuery.of(context),
-            child: child
+          builder: (context, child) => Builder(
+            builder: (context) {
+              return Provider<MediaQueryData>.value(value: MediaQuery.of(context), child: child);
+            }
           ),
           home: WishlistScreen(),
         ),

@@ -218,4 +218,21 @@ class WishlistBloc extends Cubit<WishlistState> {
 
     emit(CardMovedState(userPk: userPk, wishPk: wishPk, cardPk: cardPk, newIndex: newIndex));
   }
+
+  void createCard(String userPk, int wishPk, Card card) {
+    final w = wishOfUser(userPk, wishPk)!;
+
+    w.cards.add(card);
+
+    emit(CardAddedState(newLength: w.cards.length, addedCard: card, userPk: userPk, wishPk: wishPk));
+  }
+
+  void deleteCard(String userPk, int wishPk, int cardPk) {
+    final w = wishOfUser(userPk, wishPk)!;
+    final c = w.cards.firstWhere((e) => e.pk == cardPk);
+
+    w.cards.remove(c);
+    
+    emit(CardDeletedState(newLength: w.cards.length, deletedCard: c, userPk: userPk, wishPk: wishPk));
+  }
 }

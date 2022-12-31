@@ -46,10 +46,7 @@ class FallingStylePage<T> extends PageRoute<T> {
 
   @override
   Widget buildPage(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
-    return AncestorRoute(
-      route: this,
-      child: child,
-    );
+    return child;
   }
 
   // @override

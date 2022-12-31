@@ -24,10 +24,11 @@ class TextCard extends Card {
 
 enum CardRelativePosition { above, below }
 
+// If [text] is null then there must be no text card around the image
 class ImageCard extends Card {
   final ImageProvider image;
-  final CardRelativePosition textPosition;
-  final String text;
+  final CardRelativePosition? textPosition;
+  final String? text;
 
   ImageCard({
     required pk,
