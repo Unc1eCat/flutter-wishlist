@@ -17,6 +17,7 @@ import 'package:vibration/vibration.dart';
 import 'package:wishlist_mobile/main.dart';
 import 'package:wishlist_mobile/screens/falling_style_page.dart';
 import 'package:wishlist_mobile/utils/provider.dart';
+import 'package:wishlist_mobile/widgets/action_button.dart';
 import 'package:wishlist_mobile/widgets/bloc_listener_state_mixin.dart';
 import 'package:wishlist_mobile/widgets/heavy_touch_button.dart';
 import 'package:wishlist_mobile/widgets/owner/create_card_button.dart';
@@ -59,7 +60,7 @@ class _GlobalWishCardKey<T extends State<StatefulWidget>> extends GlobalKey<T> {
   int get hashCode => Object.hash(userPk, wishPk, cardPk);
 }
 
-// FIXME: The context is not rebuild when mediaquery updates   
+// FIXME: The context is not rebuild when mediaquery updates
 int cardColumnsCount(BuildContext context) => context.selectMediaQuery((data) => (data.size.width / 250).ceil());
 double cardWidth(BuildContext context, double horizontalSpacing, double totalHorizontalPadding) {
   final cols = cardColumnsCount(context);
@@ -76,23 +77,6 @@ Widget _createCardFor(String userPk, int wishPk, m.Card card, {Key? key}) {
   }
   // Later more types will be made
 }
-
-Widget buildActionButton({required VoidCallback onPressed, required Color color, required IconData icon}) {
-  return Padding(
-    padding: const EdgeInsets.only(top: 10.0, bottom: 10.0, right: 15.0),
-    child: HeavyTouchButton(
-      onPressed: onPressed,
-      child: DecoratedBox(
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: color),
-        child: Padding(
-          padding: const EdgeInsets.all(5.0),
-          child: Icon(icon),
-        ),
-      ),
-    ),
-  );
-}
-
 class WishDetailsHeaderDelegate extends SliverPersistentHeaderDelegate {
   final Widget child;
   final Color gradientColor;
@@ -276,31 +260,13 @@ class WishDetailsState extends State<WishDetails> with TickerProviderStateMixin<
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    buildActionButton(
+                    ActionButton(
                       onPressed: () {},
-                      color: Colors.indigo.shade400,
                       icon: Icons.archive_rounded,
                     ),
-                    buildActionButton(
+                    ActionButton(
                       onPressed: () {},
-                      color: Colors.red.shade400,
                       icon: Icons.delete_rounded,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10.0),
-                      child: HeavyTouchButton(
-                        onPressed: () {},
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.purple.shade400),
-                          child: Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: Row(children: [
-                              const Icon(Icons.add_box_rounded),
-                              Text('  ADD NEW CARD!', style: th.textTheme.button),
-                            ]),
-                          ),
-                        ),
-                      ),
                     ),
                   ],
                 ),
@@ -346,8 +312,8 @@ class WishDetailsState extends State<WishDetails> with TickerProviderStateMixin<
 
                   return PinterestGrid(
                     crossAxisCount: cardColumnsCount(context),
-                    crossAxisSpacing: 8,
-                    bottomMarginOnChildren: 12,
+                    crossAxisSpacing: 6,
+                    bottomMarginOnChildren: 10,
                     children: children,
                   );
                 }),
@@ -377,7 +343,7 @@ class WishDetailsState extends State<WishDetails> with TickerProviderStateMixin<
           WidgetsBinding.instance.addPostFrameCallback((timeStamp) {});
           final n = Navigator.of(context);
           n.pop();
-          Future.delayed(const Duration(milliseconds: 3000)).then((value) => showWishDetailScreen(n.context, 'abc', 0));
+          // Future.delayed(const Duration(milliseconds: 3000)).then((value) => showWishDetailScreen(n.context, 'abc', 0));
         },
         child: buildModel
                 .isChecked // This data is not in a bloc builder because it changes rarely and will probably require user to explicitly request a refresh of information on the client

@@ -37,6 +37,15 @@ extension HSVColorUtilExtension on HSVColor {
   HSVColor withClosestLerpOfSv(double amount) => HSVColor.fromAHSV(alpha, hue, saturation.zeroOneClosestLerp(amount), value.zeroOneClosestLerp(amount));
   HSVColor withClosestLerpOfSaturation(double amount) => withSaturation(saturation.zeroOneClosestLerp(amount));
   HSVColor withClosestLerpOfValue(double amount) => withValue(value.zeroOneClosestLerp(amount));
+
+  HSVColor withSaturationPushedOutOfRange(double from, double to) {
+    assert (0 <= from || to <= 1);
+    return withSaturation(saturation.biclamp(0, 1, from, to)!);
+  }
+  HSVColor withValuePushedOutOfRange(double from, double to) {
+    assert (0 <= from || to <= 1);
+    return withValue(value.biclamp(0, 1, from, to)!);
+  }
 }
 extension HSLColorUtilExtension on HSLColor {
   Color get rgb => toColor();
@@ -49,6 +58,7 @@ extension HSLColorUtilExtension on HSLColor {
   HSLColor get withInvertedSaturation => withSaturation(1.0 - saturation);
   HSLColor get withInvertedLightness => withLightness(1.0 - lightness);
 
+  /// Returns black or white whatever is the closest
   HSLColor get withRoundedLightness => withLightness(lightness.round().toDouble());
 
   /// stretch is from 0.0 to 2.0. 
@@ -74,6 +84,16 @@ extension HSLColorUtilExtension on HSLColor {
   
   HSLColor withClosestLerpOfSaturation(double amount) => withSaturation(saturation.zeroOneClosestLerp(amount));
   HSLColor withClosestLerpOfLightness(double amount) => withLightness(lightness.zeroOneClosestLerp(amount));
+
+  HSLColor withSaturationPushedOutOfRange(double from, double to) {
+    assert (0 <= from || to <= 1);
+    return withSaturation(saturation.biclamp(0, 1, from, to)!);
+  }
+
+  HSLColor withLightnessPushedOutOfRange(double from, double to) {
+    assert (0 <= from || to <= 1);
+    return withLightness(lightness.biclamp(0, 1, from, to)!);
+  }
 }
 
 // argb
@@ -88,6 +108,6 @@ extension ColorUtilExtension on Color {
   Color get argbInverted => Color(~value);
 
   /// Amount is from 0.0 to 1.0
-  Color? blendedWithRgbInversion(double amount) => Color.lerp(this, rgbInverted, amount);
-  Color? blendedWithArgbInversion(double amount) => Color.lerp(this, argbInverted, amount);
+  Color blendedWithRgbInversion(double amount) => Color.lerp(this, rgbInverted, amount)!;
+  Color blendedWithArgbInversion(double amount) => Color.lerp(this, argbInverted, amount)!;
 }

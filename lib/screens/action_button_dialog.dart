@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:equatable/equatable.dart';
@@ -49,7 +50,7 @@ class ActionButtonDialogPage extends PageRoute {
   // Animation<double> get animation => _curvedAnimation;
 
   @override
-  Color? get barrierColor => Colors.black87;
+  Color? get barrierColor => Colors.black54;
 
   @override
   bool get opaque => false;
@@ -106,7 +107,7 @@ class ActionButtonDialogPage extends PageRoute {
   Widget buildTransitions(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
     animation = CurvedAnimation(parent: animation, curve: Interval(0.6, 1.0));
     return SlideTransition(
-      position: offsetTween(0, -0.1, 0, 0).animate(animation),
+      position: offsetTween(0, -0.05, 0, 0).animate(animation),
       child: FadeTransition(
         opacity: animation,
         child: child,
@@ -175,7 +176,7 @@ class DialogActionButton extends StatelessWidget {
               return PhysicalModel(
                 elevation: animation.value * dialogElevation,
                 borderRadius: BorderRadius.lerp(buttonBorderRadius, dialogBorderRadius, animation.value)!,
-                color: Color.lerp(buttonColor, buildDialogColor, animation.value)!,
+                color: Color.lerp(buttonColor, buildDialogColor, pow(animation.value, 1/3).toDouble())!,
                 child: Padding(
                   padding: EdgeInsets.lerp(buttonPadding, dialogPadding, animation.value)!,
                   child: Stack(
@@ -187,9 +188,9 @@ class DialogActionButton extends StatelessWidget {
                         size: lerpDouble(24, dialogIconSize, animation.value),
                       ),
                       Positioned(
-                        top: (dialogIconSize + bodyIndent) * animation.value,
+                        top: (dialogIconSize + bodyIndent) * pow(animation.value, 1.5).toDouble(),
                         child: Opacity(
-                          opacity: animation.value,
+                          opacity: pow(animation.value, 3).toDouble(),
                           child: SizedBox.fromSize(
                             size: topSize - Offset(dialogPadding.horizontal, 0) as Size,
                             child: body,

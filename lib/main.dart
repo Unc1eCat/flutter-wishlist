@@ -5,11 +5,49 @@ import 'package:local_hero/local_hero.dart';
 import 'package:provider/provider.dart';
 import 'package:wishlist_mobile/bloc/wishlist_bloc.dart';
 import 'package:wishlist_mobile/models.dart';
+import 'package:wishlist_mobile/screens/owner/tabs_screen.dart';
 import 'package:wishlist_mobile/screens/owner/wishlist.dart';
+import 'package:wishlist_mobile/utils/color.dart';
 
 void main() {
   // debugRepaintRainbowEnabled = true;
   runApp(const MyApp());
+}
+
+ThemeData _createAppsDarkTheme() {
+  final defaultDarkTheme = ThemeData.dark();
+  return defaultDarkTheme.copyWith(
+      useMaterial3: true,
+      cardColor: Color.lerp(Colors.grey[900], Colors.blueAccent[400], 0.04),
+      highlightColor: Colors.transparent,
+      splashColor: Colors.transparent,
+      cardTheme: defaultDarkTheme.cardTheme.copyWith(
+        color: Color.lerp(Colors.grey[900], Colors.blueAccent[400], 0.04),
+        elevation: 5,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      ),
+      textSelectionTheme: TextSelectionThemeData(
+        cursorColor: Colors.amber[200],
+        selectionHandleColor: Colors.amber[200],
+        selectionColor: Colors.orange[200]?.withOpacity(0.4),
+      ),
+      colorScheme: defaultDarkTheme.colorScheme.copyWith(
+        primary: Color.lerp(Colors.pink[300], Colors.grey, 0.1),
+        secondary: Colors.amber[300],
+      ),
+      textTheme: defaultDarkTheme.textTheme.copyWith(
+        titleMedium: const TextStyle(fontSize: 18, letterSpacing: 0.5),
+        bodyMedium: const TextStyle(fontSize: 16),
+      ),
+      buttonTheme: defaultDarkTheme.buttonTheme.copyWith(
+        colorScheme: defaultDarkTheme.buttonTheme.colorScheme!.copyWith(
+          primary: Color.lerp(Colors.pink[300], Colors.grey, 0.1),
+        ),
+      ),
+      bottomNavigationBarTheme: defaultDarkTheme.bottomNavigationBarTheme.copyWith(
+        unselectedItemColor: Colors.white60,
+        selectedItemColor: Colors.white,
+      ));
 }
 
 class MyApp extends StatefulWidget {
@@ -72,24 +110,11 @@ class MyAppState extends State<MyApp> {
         curve: Curves.easeInOut,
         child: MaterialApp(
           title: 'Flutter Demo',
-          theme: ThemeData.dark().copyWith(
-            textSelectionTheme: TextSelectionThemeData(
-              cursorColor: Colors.amberAccent[100],
-              selectionHandleColor: Colors.amberAccent[100],
-              selectionColor: Colors.orange[300]?.withOpacity(0.4),
-            ),
-            primaryColor: Colors.pinkAccent,
-            textTheme: ThemeData.dark().textTheme.copyWith(
-                  titleMedium: const TextStyle(fontSize: 18, letterSpacing: 0.5),
-                  bodyMedium: const TextStyle(fontSize: 16),
-                ),
-          ),
-          builder: (context, child) => Builder(
-            builder: (context) {
-              return Provider<MediaQueryData>.value(value: MediaQuery.of(context), child: child);
-            }
-          ),
-          home: WishlistScreen(),
+          theme: _createAppsDarkTheme(),
+          builder: (context, child) => Builder(builder: (context) {
+            return Provider<MediaQueryData>.value(value: MediaQuery.of(context), child: child);
+          }),
+          home: TabsScreen(),
         ),
       ),
     );

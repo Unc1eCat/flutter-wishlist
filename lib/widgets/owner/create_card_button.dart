@@ -27,7 +27,7 @@ class CreateCardButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = Theme.of(context).colorScheme.onBackground.blendedWithRgbInversion(0.4)!;
+    final color = Theme.of(context).cardColor.hsl.withFarthestLerpOfLightness(0.2).rgb;
 
     return HeavyTouchButton(
       // animationDuration: Duration(milliseconds: 500),
@@ -54,11 +54,11 @@ class CreateCardButton extends StatelessWidget {
                     circularRadius: 20,
                     borderPadding: const EdgeInsets.all(3),
                     strokeWidth: 6,
-                    padding: EdgeInsets.all(13),
+                    padding: EdgeInsets.all(11),
                     approximatedDashPattern: [16, 20],
                     child: DecoratedBox(
                       decoration: BoxDecoration(
-                        boxShadow: [BoxShadow(color: color.withOpacity(0.2), blurRadius: 7, spreadRadius: 5)],
+                        boxShadow: [BoxShadow(color: color.withOpacity(0.2), blurRadius: 5, spreadRadius: 5)],
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Center(
@@ -73,54 +73,17 @@ class CreateCardButton extends StatelessWidget {
                 ),
               ),
             );
-            // SizedBox.expand(
-            //   child: Padding(
-            //     padding: const EdgeInsets.all(0),
-            //     child: AnimatedBuilder(
-            //       animation: animation,
-            //       builder: (context, child) {
-            //         final flightRenderBox = flightContext.findRenderObject() as RenderBox;
-            //         final l = borderLength(flightRenderBox.constraints.biggest, 6, 20)! / bottomBorderLength;
-            //         return PatternAligningRoundedDottedBox(
-            //           color: color,
-            //           circularRadius: 20,
-            //           borderPadding: const EdgeInsets.all(3),
-            //           strokeWidth: 6,
-            //           padding: EdgeInsets.all(13),
-            //           approximatedDashPattern: [16 * l, 20 * l],
-            //           child: Opacity(
-            //             opacity: 1 - animation.value,
-            //             child: child,
-            //           ),
-            //         );
-            //       },
-            //       child: DecoratedBox(
-            //         decoration: BoxDecoration(
-            //           boxShadow: [BoxShadow(color: color.withOpacity(0.2), blurRadius: 8 + animation.value * 4, spreadRadius: 6 + animation.value * 9)],
-            //           borderRadius: BorderRadius.circular(20),
-            //         ),
-            //         child: Center(
-            //           child: Icon(
-            //             Icons.add_rounded,
-            //             size: 68,
-            //             color: color,
-            //           ),
-            //         ),
-            //       ),
-            //     ),
-            //   ),
-            // );
           },
           child: PatternAligningRoundedDottedBox.fitBorderWithinConstraints(
             color: color,
             circularRadius: 20,
             borderPadding: const EdgeInsets.all(3),
             strokeWidth: 6,
-            padding: EdgeInsets.all(13),
+            padding: EdgeInsets.all(11),
             approximatedDashPattern: [16, 20],
             child: DecoratedBox(
               decoration: BoxDecoration(
-                boxShadow: [BoxShadow(color: color.withOpacity(0.2), blurRadius: 7, spreadRadius: 5)],
+                boxShadow: [BoxShadow(color: color.withOpacity(0.2), blurRadius: 5, spreadRadius: 5)],
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Center(

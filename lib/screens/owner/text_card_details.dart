@@ -14,6 +14,8 @@ import 'package:wishlist_mobile/widgets/overscroll_closing.dart';
 import 'package:wishlist_mobile/widgets/owner/text_card.dart' show buildCardForTextCard;
 import 'package:wishlist_mobile/screens/owner/wish_details.dart';
 
+import '../../widgets/action_button.dart';
+
 class TextCardDetails extends StatefulWidget {
   final String userPk;
   final int wishPk;
@@ -111,7 +113,7 @@ class _TextCardDetailsState extends State<TextCardDetails> with TickerProviderSt
                             padding: const EdgeInsets.only(top: 10.0, bottom: 10.0, right: 15.0),
                             child: DialogActionButton(
                               tag: 'dtc',
-                              buttonColor: Colors.red.shade400,
+                              buttonColor: Theme.of(context).buttonTheme.colorScheme!.primary,
                               icon: Icons.delete_rounded,
                               body: Text('Are you sure that you want to delete the card?'),
                               iconColor: Colors.white,
@@ -124,7 +126,7 @@ class _TextCardDetailsState extends State<TextCardDetails> with TickerProviderSt
                                       context,
                                       'Delete the card',
                                       Icons.delete_rounded,
-                                      Colors.red[400],
+                                      Theme.of(context).errorColor,
                                       () {
                                         bloc.deleteCard(widget.userPk, widget.wishPk, widget.cardPk);
                                         Navigator.of(context).pop();
@@ -153,9 +155,8 @@ class _TextCardDetailsState extends State<TextCardDetails> with TickerProviderSt
                           //   color: Colors.red.shade400,
                           //   icon: Icons.delete_rounded,
                           // ),
-                          buildActionButton(
+                          ActionButton(
                             onPressed: () {},
-                            color: Colors.amber[600]!,
                             icon: Icons.copy_rounded,
                           ),
                         ],
