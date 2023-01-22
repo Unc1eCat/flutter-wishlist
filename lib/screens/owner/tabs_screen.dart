@@ -57,7 +57,7 @@ class _TabsScreenState extends State<TabsScreen> with SingleTickerProviderStateM
                 domeCircleColor: Colors.transparent,
                 barWidth: MediaQuery.of(context).size.width - 100,
                 controller: _tabController,
-                domeHeight: 15,
+                domeWidth: 120,
                 tabs: [
                   IconMoltenTab(icon: Icons.star_rounded),
                   IconMoltenTab(icon: Icons.waving_hand_outlined),

@@ -140,7 +140,7 @@ class _CustomChildMoltenBottomNavigationBarState extends State<CustomChildMolten
 
     final tabWidth = (widget.barWidth - widget.sidePadding * 2) / widget.tabs.length;
 
-    final domeWidth = min(widget.domeWidth, tabWidth + widget.sidePadding - max(borderRadius.topLeft.x, borderRadius.topRight.x));
+    final domeWidth = min(widget.domeWidth, tabWidth + 2 * (widget.sidePadding - max(borderRadius.topLeft.x, borderRadius.topRight.x)));
 
     final sidePadding = widget.sidePadding;
 
